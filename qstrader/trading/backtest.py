@@ -39,6 +39,8 @@ class BacktestTradingSession(TradingSession):
         The Asset Universe to utilise for the backtest.
     alpha_model : `AlphaModel`
         The signal/forecast alpha model for the quant trading strategy.
+    signals : `SignalsCollection`, optional
+        An optional collection of signals used in the trading models.
     initial_cash : `float`, optional
         The initial account equity (defaults to $1MM)
     rebalance : `str`, optional
@@ -64,6 +66,7 @@ class BacktestTradingSession(TradingSession):
         end_dt,
         universe,
         alpha_model,
+        signals=None,
         initial_cash=1e6,
         rebalance='weekly',
         account_name=DEFAULT_ACCOUNT_NAME,
@@ -79,6 +82,7 @@ class BacktestTradingSession(TradingSession):
         self.end_dt = end_dt
         self.universe = universe
         self.alpha_model = alpha_model
+        self.signals = signals
         self.initial_cash = initial_cash
         self.rebalance = rebalance
         self.account_name = account_name
@@ -346,6 +350,10 @@ class BacktestTradingSession(TradingSession):
 
             # Update the simulated broker
             self.broker.update(dt)
+
+            # Update any signals on a daily basis
+            if self.signals is not None and event.event_type == "market_close":
+                self.signals.update(dt)
 
             # If we have hit a rebalance time then carry
             # out a full run of the quant trading system

@@ -14,11 +14,11 @@ class MomentumSignal(object):
     ----------
     assets : `list[str]`
         The list of assets to create price buffers for.
-    lookbacks : `list[int]`, optional
+    lookbacks : `list[int]`
         The number of lookback periods to store prices for.
     """
 
-    def __init__(self, assets, lookbacks=[12]):
+    def __init__(self, assets, lookbacks):
         self.assets = assets
         self.lookbacks = lookbacks
         self.buffers = self._create_asset_price_buffers()
